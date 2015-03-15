@@ -63,7 +63,8 @@ class Ray(object):
             p, k must be 3D array (same dimension with r1, r2
         '''
         p=na(p)     # p, k converted to numpy array for consistency
-        if k==None:
+        if k is None:   # is operator is used here since when 
+                        # an array compared to None, error occurs
             k=self.__direction
         k=na(k)     # k is a numpy array
         temp=p,k    # convert p, k to a tuple for appending
@@ -143,7 +144,7 @@ class SphericalRefraction(OpticalElement):
         else:
             # curvature of the optical element is 0,
             # then it is just a flat surface
-            l=1.*(self.__z0-p[2])/k[2]
+            l=(1.*self.__z0-p[2])/k[2]
             intercept_point=p+l*k
         apturerad=reduce(lambda x,y:x**2+y**2, \
                             intercept_point[:-1])
@@ -196,7 +197,7 @@ class SphericalRefraction(OpticalElement):
             dot(cross(Nn,k),cross(Nn,k)))
             # n is a unit vector represent the direction of refracted wave.
             
-        temp_vevtor=cross(k,N)      # cross product for finding sin(theta1)
+        temp_vector=cross(k,N)      # cross product for finding sin(theta1)
         temp=norm(temp_vector)      # norm is sin(theta1)
         if 1.*n1/n2*temp < 1:       # refraction angle less than 90 degree
             return n
@@ -206,7 +207,8 @@ class SphericalRefraction(OpticalElement):
     #Task 6.
     def propagate_ray(self,ray):
         new_point=self.intercept(ray)
-        if new_point==None:
+        if new_point is None:  # is operator is used here since when 
+                               # an array compared to None, error occurs
             return None            #do nothing when no intercept point
         else:
             k=normalise(ray.k())
@@ -215,17 +217,20 @@ class SphericalRefraction(OpticalElement):
             if self.__curvature == 0:
                 N=1.*na([0,0,1])
             elif self.__curvature > 0:
-                O=1.*na((0,0,self.__z0+R))
+                R=1./self.__curvature
+                O=na((0,0,1.*self.__z0+R))
                 p=ray.p()
                 N=O-p
                 N=normalise(N)
             else:
-                O=1.*na((0,0,self.__z0+R))
+                R=1./self.__curvature
+                O=na((0,0,1.*self.__z0+R))
                 p=ray.p()
                 N=p-O
                 N=normalise(N)
             v=self.refraction(k,N,n1,n2)
-            if v==None:
+            if v is None:   # is operator is used here since when 
+                            # an array compared to None, error occurs
                 return None        #do nothing if total reflected
             else:
                 ray.append(new_point,v)
@@ -237,45 +242,37 @@ class SphericalRefraction(OpticalElement):
 # of initial rays to check your refracting object behaves as you expect.
 if __name__=='__main__':
     # testing parameters
-    ray1_argv=([0,0,0],[10,10,3]) # no intercept
-    ray2_argv=([0,0,0],[1,1,30])  # intercept
-    ray3_argv=([4,0,0],[0,0,3])   # perpendicular
+    ray1_argv=([0,0,0],[10,10,3])   # no intercept
+    ray2_argv=([0,0,0],[1,1,0.5])   # intercept
+    ray3_argv=([4,0,0],[0,0,3])     # perpendicular
     lens1_argv=(1,0.025,1,1.5,5)    # glass lens1 with curvature
-    lens2_argv=(1,0,1,1.5,5)        # plane surface
+    lens2_argv=(2,0,1,1.5,5)        # plane surface
+    lens3_argv=(3,-0.025,1,1.5,5)   # negative curvature
     r1=Ray(*ray1_argv)
     r2=Ray(*ray2_argv)
     r3=Ray(*ray3_argv)
     s1=SphericalRefraction(*lens1_argv)
     s2=SphericalRefraction(*lens2_argv)
+    s3=SphericalRefraction(*lens3_argv)
     ray=r1,r2,r3
-    lens=s1,s2
+    lens=s1,s2,s3
+    c=1
     for i in ray:
         for j in lens:
-            print ("intercept:%s\n\
-                    refraction:%s\n") %(j.intercept(i), j.refraction(i))
-            j.propagate(i)
-        print ("ray parameters: p:%s,\n\t\
-                k:%s,\n\t\
-                vertices:%s\n") %(i.p(), i.k(), i.vertices())
-        
-                
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+            print c,
+            print ("intercept:%s\n") %str(j.intercept(i))
+            print ("ray parameters: p:%s,\n\t"
+                "k:%s,\n\t"
+                "vertices:%s\n") %(i.p(), i.k(), i.vertices())
+            j.propagate_ray(i)
+            print ("ray parameters: p:%s,\n\t"
+                "k:%s,\n\t"
+                "vertices:%s\n") %(i.p(), i.k(), i.vertices())
+            c+=1
+            print ("###########################################"\
+            "############\n")
+            
+   
     
     
     
