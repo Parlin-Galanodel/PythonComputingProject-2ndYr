@@ -85,7 +85,7 @@ class OpticalElement(object):         #provided OpticalElement class
             
             
 # Task 3: SphericalRefraction class
-class SphericalRefraction(OptialElement):
+class SphericalRefraction(OpticalElement):
     def __init__(self, z0=1, curvature=0.1, n1=1, n2=1.2,\
                  aperture_radius=30):    # default value just for convenience
                                          # in testing code
@@ -232,13 +232,33 @@ class SphericalRefraction(OptialElement):
                 # By returning None, the ray without valid intercept or 
                 # diffract direction are abandoned.
             
-            
-            
-            
-            
-
+# Task 7.Test your code. Create a refracting surface and a ray and check
+# propagate_ray correctly propagates and refracts the ray. Try a range
+# of initial rays to check your refracting object behaves as you expect.
+if __name__=='__main__':
+    # testing parameters
+    ray1_argv=([0,0,0],[10,10,3]) # no intercept
+    ray2_argv=([0,0,0],[1,1,30])  # intercept
+    ray3_argv=([4,0,0],[0,0,3])   # perpendicular
+    lens1_argv=(1,0.025,1,1.5,5)    # glass lens1 with curvature
+    lens2_argv=(1,0,1,1.5,5)        # plane surface
+    r1=Ray(*ray1_argv)
+    r2=Ray(*ray2_argv)
+    r3=Ray(*ray3_argv)
+    s1=SphericalRefraction(*lens1_argv)
+    s2=SphericalRefraction(*lens2_argv)
+    ray=r1,r2,r3
+    lens=s1,s2
+    for i in ray:
+        for j in lens:
+            print ("intercept:%s\n\
+                    refraction:%s\n") %(j.intercept(i), j.refraction(i))
+            j.propagate(i)
+        print ("ray parameters: p:%s,\n\t\
+                k:%s,\n\t\
+                vertices:%s\n") %(i.p(), i.k(), i.vertices())
         
-        
+                
     
     
     
