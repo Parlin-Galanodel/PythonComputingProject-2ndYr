@@ -234,9 +234,33 @@ class SphericalRefraction(OpticalElement):
                 return None        #do nothing if total reflected
             else:
                 ray.append(new_point,v)
+                return None # this func always return None even though
+                            # the ray is updated by the func.
                 # By returning None, the ray without valid intercept or 
                 # diffract direction are abandoned.
-            
+    
+# Task 8.
+# Write a class OutputPlane, that is an OpticalElement. Implement
+# methods intercept and propagate_ray.
+class OutputPlane(SphericalRefraction):
+    # the OutputPlane was required to be an OpticalElement, so it 
+    # is a subclass of SphericalRefraction which is an subclass
+    # of OpticalElement.
+    '''
+        The object worked as screen behind any lens used in 
+        this experiment.
+    '''
+    def __init__(self, position):
+        z0=position
+        curvature=0                 # outputplane is flat plane
+        n1=n2=1                     # No refraction
+        aperture_radius=1000        # Screen must be big enough
+        super(OutputPlane,self).__init__()
+
+
+
+
+   
 # Task 7.Test your code. Create a refracting surface and a ray and check
 # propagate_ray correctly propagates and refracts the ray. Try a range
 # of initial rays to check your refracting object behaves as you expect.
@@ -271,6 +295,8 @@ if __name__=='__main__':
             c+=1
             print ("###########################################"\
             "############\n")
+ 
+ 
             
    
     
