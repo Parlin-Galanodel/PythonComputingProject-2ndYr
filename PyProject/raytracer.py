@@ -1,4 +1,4 @@
-# Task 1:
+# Task 1: Write a doc string for this module
 '''
 The Project aimed to build a 3D raytracer to investigate the
 imaging performance of simple lenses and optimise the design
@@ -6,22 +6,24 @@ of a biconvex lens
 '''
 
 from numpy import array as na
-
-from numpy import dot, cross        # inner product and cross product
-                                    # of two numpy array
-from math import sqrt
-from numpy.linalg import norm #, inv  # norm of vector or matrix
-                                    # inverse of a matrix
-                                    # inv is not need any more
+from numpy import dot, cross            # inner product and cross product
+                                        # of two numpy array
+from math import sqrt                   # square root function in math module
+from numpy.linalg import norm   #, inv  # norm of vector or matrix
+                                        # inverse of a matrix
+                                        # inv is not need any more
                                     
-#from numpy import matrix           # do not need it any more
+#from numpy import matrix               # do not need it any more
+                                        # matrix method is abandoned
 
-def normalise(v):               #normalise a vector
+def normalise(v):               # normalise a vector
+                                # this function would be used latter
     '''
         A func used to normalise a vector
     '''
     normv=norm(v)
-    return 1.*v/normv      # 1. is used to convert potential int to float.
+    return 1.*v/normv      # 1. is used to convert potential int to
+                           # float.
 
 
 
@@ -41,7 +43,13 @@ class Ray(object):
         '''
         self.__currentPoint=na(r1)      # na is numpy array
         self.__direction=na(r2)         # r1 & r2 converted to array
+        # I do not want to change the initial attribute, so I create a
+        # list used to store the position and direction pairs as a
+        # description of this ray
         self.__points=[(self.__currentPoint, self.__direction)]
+            # Considering about the initial direction is set by user, 
+            # original vector would be dealt with comfortable when users
+            # read the original value and so I do not normalise it here.
         
     def p(self):
         '''
@@ -74,12 +82,23 @@ class Ray(object):
         '''
             return all the points along the ray
         '''
-        return zip(*self.__points)[0] #unpack self.__point to list of 
-                                      #points and direction, then return
-                                      #point part
+        return zip(*self.__points)[0] # unpack self.__point to list of 
+                                      # points and direction, then return
+                                      # point part
+    
+    def points(self):
+        # return all the points on the ray by position and direction pairs
+        # I think this gives better description of the ray. 
+        return self.__points
+        
+    def __repr__(self):               # representation of ray.
+        p = zip(*self.__points)[0]
+        k = zip(*self.__points)[1]
+        return "A ray:\n""ray points: %s \n"\
+               "ray direction: %s \n" %(p, k)
                                       
-class OpticalElement(object):         #provided OpticalElement class
-                                      #it is a general base class
+class OpticalElement(object):         # provided OpticalElement class
+                                      # it is a general base class
     def propagate_ray(self, ray):
         "propagate a ray through the optical element"
         raise NotImplementedError()
@@ -124,22 +143,24 @@ class SphericalRefraction(OpticalElement):
         k=normalise(ray.k())        
         if self.__curvature != 0:
             # Find the parameter would be used firstly           
-            R=1./self.__curvature
-            O=1.*na((0,0,self.__z0+R))
-            r=p-O
-            # Do the calculation
-#            assert dot(r,k)-dot(r,r)+R**2
-#            assert type(r)==type(k)
-            if ((dot(r,k))**2-dot(r,r)+R**2) <0:
+            R=1./self.__curvature           # radius of the lens
+            O=1.*na((0,0,self.__z0+R))      # position of the centre of lens
+            r=p-O                           # r vector in the graph on page 20
+                                            # in my lab book
+        # Do the calculation
+           #assert dot(r,k)-dot(r,r)+R**2   # old check step
+           #assert type(r)==type(k)         # old check step
+            if ((dot(r,k))**2-dot(r,r)+R**2) <0:    # delta < 0, no solution
                 return None   # no intercept
+            # the two solutions are below
             l1=-dot(r,k)+sqrt((dot(r,k))**2-dot(r,r)+R**2)
             l2=-dot(r,k)-sqrt((dot(r,k))**2-dot(r,r)+R**2)
-            if l1==l2:
-                return None
+            if l1==l2:          # same solution which means tangency, 
+                return None     # no intercept
             elif R>0:
-                l=min(l1,l2)
+                l=min(l1,l2)    # smaller value is l
             else:
-                l=max(l1,l2)
+                l=max(l1,l2)    # greater value is l
             intercept_point=p+l*k
         else:
             # curvature of the optical element is 0,
@@ -168,12 +189,12 @@ class SphericalRefraction(OpticalElement):
         # # # sin_theta2=sin_theta1*n1/n2 #This vector's norm is sin(theta2)
         # # # sin_theta2=sin_theta2*sin_theta2
         # # # sin_theta2=sin_theta2[0]**2+sin_theta2[1]**2+sin_theta2[2]**2
-                # # # # This is just [in(theta2)]**2, but could be used 
-                # # # # to judge whether total reflected or not.
+                # # # # # This is just [in(theta2)]**2, but could be used 
+                # # # # # to judge whether total reflected or not.
         # # # if sin_theta2 >= 1:
             # # # return None
         # # # else:
-            # # # #do the calculation by converting and converting and converting
+            # # # # #do the calculation by converting and converting and converting
             # # # M=[[0,-n2*N[2],n2*N[1]],[-n2*N[2],0,n2*N[0]],[-n2*N[1],\
                 # # # n2*N[0],0]]
             # # # M=matrix(M)
@@ -186,10 +207,12 @@ class SphericalRefraction(OpticalElement):
             # # # d=d[0][0],d[0][1],d[0][2]
             # # # d=na(d)
             # # # return normalise(d)
-    # Martix method is stupid and complex compared to the formula I found online
+# Martix method is stupid and complex compared to the formula I found online
             
             
-            # Rewrite it by Snell's law in 3D, vector form to be exactly.
+            # Rewrite it by Snell's law in 3D, vector form.
+            # I am worried on using theta in formula and so I do not use
+            # the formula on wikipedia.
             # The formula comes from StarkEffects.com
             # (http://www.starkeffects.com/snells-law-vector.shtml)
         Nn=-1.*N     #negative N, since the formula use N as norm toward Incident
@@ -250,15 +273,13 @@ class OutputPlane(SphericalRefraction):
         The object worked as screen behind any lens used in 
         this experiment.
     '''
-    def __init__(self, position):
+    def __init__(self, position=10):
         z0=position
         curvature=0                 # outputplane is flat plane
         n1=n2=1                     # No refraction
         aperture_radius=1000        # Screen must be big enough
         super(OutputPlane,self).__init__()
-
-
-
+    
 
    
 # Task 7.Test your code. Create a refracting surface and a ray and check
@@ -280,18 +301,17 @@ if __name__=='__main__':
     s3=SphericalRefraction(*lens3_argv)
     ray=r1,r2,r3
     lens=s1,s2,s3
+    O=OutputPlane()
     c=1
     for i in ray:
         for j in lens:
-            print c,
-            print ("intercept:%s\n") %str(j.intercept(i))
-            print ("ray parameters: p:%s,\n\t"
-                "k:%s,\n\t"
-                "vertices:%s\n") %(i.p(), i.k(), i.vertices())
+            print c
+            print "intercept:%s\n" %str(j.intercept(i))
+            print i,'\n'
             j.propagate_ray(i)
-            print ("ray parameters: p:%s,\n\t"
-                "k:%s,\n\t"
-                "vertices:%s\n") %(i.p(), i.k(), i.vertices())
+            print i,'\n'
+            O.propagate_ray(i)
+            print i,'\n'
             c+=1
             print ("###########################################"\
             "############\n")
