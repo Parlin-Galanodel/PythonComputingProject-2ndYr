@@ -222,7 +222,9 @@ class SphericalRefraction(OpticalElement):
             
         temp_vector=cross(k,N)      # cross product for finding sin(theta1)
         temp=norm(temp_vector)      # norm is sin(theta1)
-        if 1.*n1/n2*temp < 1:       # refraction angle less than 90 degree
+        if n1==n2:                  # two float number could be seen as same 
+            return k                # no refraction
+        elif 1.*n1/n2*temp < 1:     # refraction angle less than 90 degree
             return n
         else:
             return None
@@ -290,16 +292,18 @@ if __name__=='__main__':
     ray1_argv=([0,0,0],[10,10,3])   # no intercept
     ray2_argv=([0,0,0],[1,1,0.5])   # intercept
     ray3_argv=([4,0,0],[0,0,3])     # perpendicular
-    lens1_argv=(1,0.025,1,1.5,5)    # glass lens1 with curvature
+    ray4_argv=([0,0,0],[0,0,3])     # z-axis
+    lens1_argv=(1,0.025,1,1.5,5)    # glass lens1 with positive curvature
     lens2_argv=(2,0,1,1.5,5)        # plane surface
     lens3_argv=(3,-0.025,1,1.5,5)   # negative curvature
     r1=Ray(*ray1_argv)
     r2=Ray(*ray2_argv)
     r3=Ray(*ray3_argv)
+    r4=Ray(*ray4_argv)
     s1=SphericalRefraction(*lens1_argv)
     s2=SphericalRefraction(*lens2_argv)
     s3=SphericalRefraction(*lens3_argv)
-    ray=r1,r2,r3
+    ray=r1,r2,r3,r4
     lens=s1,s2,s3
     O=OutputPlane()
     c=1
@@ -307,13 +311,11 @@ if __name__=='__main__':
         for j in lens:
             print c
             print "intercept:%s\n" %str(j.intercept(i))
-            print i,'\n'
             j.propagate_ray(i)
-            print i,'\n'
             O.propagate_ray(i)
-            print i,'\n'
             c+=1
-            print ("###########################################"\
+        print i,'\n'
+        print ("###########################################"\
             "############\n")
  
  
