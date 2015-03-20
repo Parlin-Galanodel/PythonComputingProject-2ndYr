@@ -21,7 +21,7 @@ def normalise(v):               # normalise a vector
     '''
         A func used to normalise a vector
     '''
-    normv=norm(v)
+    normv = norm(v)
     return 1.*v/normv      # 1. is used to convert potential int to
                            # float.
 
@@ -41,15 +41,17 @@ class Ray(object):
             list as parameters, these two list would be converted
             to the coordinate of current point and direction respectively.
         '''
-        self.__currentPoint=na(r1)      # na is numpy array
-        self.__direction=na(r2)         # r1 & r2 converted to array
-        # I do not want to change the initial attribute, so I create a
-        # list used to store the position and direction pairs as a
-        # description of this ray
-        self.__points=[(self.__currentPoint, self.__direction)]
+        self.__currentPoint = na(r1)      # na is numpy array
+        self.__direction = na(r2)         # r1 & r2 converted to array
+        # I do not want to change these two initial attributes, so I create
+        # a list used to store the position and direction pairs as a
+        # description of this ray instead of initialising current point
+        # and direction to be two lists.
+        self.__points = [(self.__currentPoint, self.__direction)]
             # Considering about the initial direction is set by user, 
-            # original vector would be dealt with comfortable when users
-            # read the original value and so I do not normalise it here.
+            # original vector would be read comfortably when users
+            # want to check the original value and so I do not normalise
+            # it here.
         
     def p(self):
         '''
@@ -65,17 +67,19 @@ class Ray(object):
         
     def append(self, p, k=None):
                 # if k not given, it would be seen as same direction
-                # as the ray. For robust consideration 
+                # as the ray. For robust consideration because
+                # I might append point manually in testing. It is 
+                # not convenient to get k value every time.
         '''
             append a new point and direction to the ray
             p, k must be 3D array (same dimension with r1, r2
         '''
-        p=na(p)     # p, k converted to numpy array for consistency
+        p = na(p)       # p, k converted to numpy array for consistency
         if k is None:   # is operator is used here since when 
                         # an array compared to None, error occurs
-            k=self.__direction
-        k=na(k)     # k is a numpy array
-        temp=p,k    # convert p, k to a tuple for appending
+            k = self.__direction
+        k = na(k)       # k is a numpy array
+        temp = p,k      # convert p, k to a tuple for appending
         self.__points.append(temp)
         
     def vertices(self):
@@ -97,7 +101,7 @@ class Ray(object):
         return "A ray:\n""ray points: %s \n"\
                "ray direction: %s \n" %(p, k)
                                       
-class OpticalElement(object):         # provided OpticalElement class
+class OpticalElement(object):       # provided OpticalElement class
                                       # it is a general base class
     def propagate_ray(self, ray):
         "propagate a ray through the optical element"
@@ -106,9 +110,10 @@ class OpticalElement(object):         # provided OpticalElement class
             
 # Task 3: SphericalRefraction class
 class SphericalRefraction(OpticalElement):
+
     def __init__(self, z0=1, curvature=0.1, n1=1, n2=1.2,\
                  aperture_radius=30):    # default value just for convenience
-                                         # in testing code
+                                         # in testing code, no special meanings
         """
            spherical refracting surface centred on the optical axis
            which can be represented by five parameters:
@@ -125,11 +130,15 @@ class SphericalRefraction(OpticalElement):
                 4. aperture radius - the maximum extent of the surface
                     from the optical axis
         """
-        self.__z0=z0
-        self.__curvature=curvature
-        self.__n1=n1
-        self.__n2=n2
-        self.__aperture_radius=aperture_radius
+        self.__z0 = z0
+        self.__curvature = curvature
+        self.__n1 = n1
+        self.__n2 = n2
+        self.__aperture_radius = aperture_radius
+        
+    def __repr__(self):     # representation method to display a spherical refraction
+        a = (self.__z0,self.__curvature,self.__n1,self.__n2,self.__aperture_radius)
+        return 'z0= %s\ncurvature= %s\nn1= %s,\tn2=%s\nradius=%s' %a
         
     # Task 4
     def intercept(self,ray):
@@ -139,38 +148,43 @@ class SphericalRefraction(OpticalElement):
             case. If there is no valid intercept, the function
             returns None.
         '''
-        p=ray.p()
-        k=normalise(ray.k())        
+        p = ray.p()
+        k = normalise(ray.k())        
         if self.__curvature != 0:
             # Find the parameter would be used firstly           
-            R=1./self.__curvature           # radius of the lens
-            O=1.*na((0,0,self.__z0+R))      # position of the centre of lens
-            r=p-O                           # r vector in the graph on page 20
-                                            # in my lab book
-        # Do the calculation
-           #assert dot(r,k)-dot(r,r)+R**2   # old check step
-           #assert type(r)==type(k)         # old check step
-            if ((dot(r,k))**2-dot(r,r)+R**2) <0:    # delta < 0, no solution
+            R = 1./self.__curvature           # radius of the lens
+            O = 1.*na((0,0,self.__z0+R))      # position of the centre of lens
+            r = p-O                           # r vector in the graph on page 20
+                                              # of my lab book
+            # Do the calculation
+            #assert dot(r,k)-dot(r,r)+R**2   # old check step
+            #assert type(r)==type(k)         # old check step
+            if ((dot(r,k))**2-dot(r,r)+R**2) <= 0:    # delta < 0, no solution
                 return None   # no intercept
-            # the two solutions are below
-            l1=-dot(r,k)+sqrt((dot(r,k))**2-dot(r,r)+R**2)
-            l2=-dot(r,k)-sqrt((dot(r,k))**2-dot(r,r)+R**2)
-            if l1==l2:          # same solution which means tangency, 
-                return None     # no intercept
-            elif R>0:
-                l=min(l1,l2)    # smaller value is l
+                # if l1 == l2,two same solution which means tangency, there is 
+                # no valid intercept.
+                
+            # when delta >=0 the two solutions are below
+            l1 = -dot(r,k) + sqrt((dot(r,k))**2-dot(r,r)+R**2)
+            l2 = -dot(r,k) - sqrt((dot(r,k))**2-dot(r,r)+R**2)
+            # l1, l2 are two different solutions, only one is the valid intercept
+            # we want.
+            if R > 0:
+                l = min(l1,l2)      # smaller value is true l
             else:
-                l=max(l1,l2)    # greater value is l
-            intercept_point=p+l*k
+                l = max(l1,l2)      # greater value is true l
+            intercept_point = p + l*k
         else:
             # curvature of the optical element is 0,
             # then it is just a flat surface
-            l=(1.*self.__z0-p[2])/k[2]
-            intercept_point=p+l*k
-        apturerad=reduce(lambda x,y:x**2+y**2, \
+            l = (1.*self.__z0-p[2])/k[2]
+            intercept_point = p + l*k
+        # The intercept must lie in the sphericalRefraction to be valid, which
+        # means that radius of the intercept is smaller than aperture_radius
+        # of the refraction.
+        apture_rad = reduce(lambda x,y:x**2+y**2, \
                             intercept_point[:-1])
-        if apturerad <= self.__aperture_radius**2:      # intercept is on the 
-                                                        # lens
+        if apture_rad <= self.__aperture_radius**2:
             return intercept_point
         else:
             return None
@@ -207,120 +221,146 @@ class SphericalRefraction(OpticalElement):
             # # # d=d[0][0],d[0][1],d[0][2]
             # # # d=na(d)
             # # # return normalise(d)
-# Martix method is stupid and complex compared to the formula I found online
-            
-            
-            # Rewrite it by Snell's law in 3D, vector form.
+
+    # Martix method is stupid and complex compared to the formula I found online
+                        
+            # Rewrite it by Snell's law in 3D, or vector form.
             # I am worried on using theta in formula and so I do not use
             # the formula on wikipedia.
             # The formula comes from StarkEffects.com
             # (http://www.starkeffects.com/snells-law-vector.shtml)
-        Nn=-1.*N     #negative N, since the formula use N as norm toward Incident
-        n=1.*n1/n2*cross(Nn,cross(N,k))-Nn*sqrt(1.-(1.*n1/n2)**2* \
+        Nn = -1.*N  #negative N, since the formula use N as norm toward Incident
+        n = 1.*n1/n2*cross(Nn,cross(N,k))-Nn*sqrt(1.-(1.*n1/n2)**2* \
             dot(cross(Nn,k),cross(Nn,k)))
-            # n is a unit vector represent the direction of refracted wave.
+            #n is a unit vector represent the direction of refracted wave.
+
+    # It is another formula from wikipedia of snell's Law below, I used it to do a double check
+    # of the formula above to make sure the consequence is true.
+        #~ r=n1/n2; c=dot(N,k);
+        #~ n=r*k-(r*c-sqrt(1.-r**2*(1-c**2)))*N
             
         temp_vector=cross(k,N)      # cross product for finding sin(theta1)
-        temp=norm(temp_vector)      # norm is sin(theta1)
-        if n1==n2:                  # two float number could be seen as same 
-            return k                # no refraction
-        elif 1.*n1/n2*temp < 1:     # refraction angle less than 90 degree
+        temp = norm(temp_vector)    # norm is sin(theta1)
+
+        if 1.*n1/n2*temp < 1:       # refraction angle less than 90 degree
             return n
         else:
             return None
         
     #Task 6.
     def propagate_ray(self,ray):
-        new_point=self.intercept(ray)
-        if new_point is None:  # is operator is used here since when 
-                               # an array compared to None, error occurs
-            return None            #do nothing when no intercept point
-        else:
-            k=normalise(ray.k())
-            n1=self.__n1
-            n2=self.__n2
+        new_point = self.intercept(ray)
+        if new_point is None:       # is operator is used here since when 
+                                    # an array compared to None, future warning
+                                    # occurs, it is not a disaster but annoyed.                                    
+            return None         # do nothing when no intercept point
+        else: 
+            # k, n1, n2 are parameters would be used to find 
+            # refract direction
+            k = normalise(ray.k())
+            n1 = self.__n1
+            n2 = self.__n2
             if self.__curvature == 0:
+                # curvature==0 yield a unit vector along z-axis
                 N=1.*na([0,0,1])
             elif self.__curvature > 0:
-                R=1./self.__curvature
-                O=na((0,0,1.*self.__z0+R))
-                p=ray.p()
-                N=O-p
-                N=normalise(N)
+            # curvature>0, N is vector PO(P is interception, O is centre
+            # of the sphericalRefraction)
+                R = 1./self.__curvature
+                O = na((0, 0, self.__z0+R))
+                p = new_point
+                N = O-p
+                N = normalise(N)
             else:
-                R=1./self.__curvature
-                O=na((0,0,1.*self.__z0+R))
-                p=ray.p()
-                N=p-O
-                N=normalise(N)
-            v=self.refraction(k,N,n1,n2)
+            # if curvature<0, the only difference is that N vectore is 
+            # OP instead of PO
+                R = 1./self.__curvature
+                O = na((0, 0, self.__z0+R))
+                p = new_point
+                N = p-O
+                N = normalise(N)
+            v = self.refraction(k,N,n1,n2)
+            # refraction function would give None if total reflection occured
             if v is None:   # is operator is used here since when 
-                            # an array compared to None, error occurs
-                return None        #do nothing if total reflected
+                            # an array compared to None, interpreter 
+                            # would give a warning, that dose not stop
+                            # the program but it's very annoying.
+                return None         #do nothing if total reflected
             else:
                 ray.append(new_point,v)
                 return None # this func always return None even though
-                            # the ray is updated by the func.
+                            # the ray is updated by the function
                 # By returning None, the ray without valid intercept or 
-                # diffract direction are abandoned.
+                # refract direction are abandoned.
     
 # Task 8.
 # Write a class OutputPlane, that is an OpticalElement. Implement
 # methods intercept and propagate_ray.
 class OutputPlane(SphericalRefraction):
-    # the OutputPlane was required to be an OpticalElement, so it 
-    # is a subclass of SphericalRefraction which is an subclass
+    # the OutputPlane was required to be an OpticalElement.
+    # Considering about it is a special case of SphericalRefraction(curvature
+    # =0, refraction index on both sides are equal, big radius.
+    # I made it a subclass of SphericalRefraction which is an subclass
     # of OpticalElement.
     '''
         The object worked as screen behind any lens used in 
-        this experiment.
+        this experiment. In initialising OutputPlane, only its
+        position, a.k.a, z0 was necessary.
     '''
     def __init__(self, position=10):
-        z0=position
-        curvature=0                 # outputplane is flat plane
-        n1=n2=1                     # No refraction
-        aperture_radius=1000        # Screen must be big enough
-        super(OutputPlane,self).__init__()
+        z0 = position
+        curvature = 0                 # outputplane is flat plane
+        n1 = n2 = 1                     # No refraction
+        aperture_radius = 10000        # Screen must be big enough
+        super(OutputPlane,self).__init__(z0,curvature,n1,n2,aperture_radius)
     
 
    
 # Task 7.Test your code. Create a refracting surface and a ray and check
 # propagate_ray correctly propagates and refracts the ray. Try a range
 # of initial rays to check your refracting object behaves as you expect.
-if __name__=='__main__':
-    # testing parameters
-    ray1_argv=([0,0,0],[10,10,3])   # no intercept
-    ray2_argv=([0,0,0],[1,1,0.5])   # intercept
-    ray3_argv=([4,0,0],[0,0,3])     # perpendicular
-    ray4_argv=([0,0,0],[0,0,3])     # z-axis
-    lens1_argv=(1,0.025,1,1.5,5)    # glass lens1 with positive curvature
-    lens2_argv=(2,0,1,1.5,5)        # plane surface
-    lens3_argv=(3,-0.025,1,1.5,5)   # negative curvature
-    r1=Ray(*ray1_argv)
-    r2=Ray(*ray2_argv)
-    r3=Ray(*ray3_argv)
-    r4=Ray(*ray4_argv)
-    s1=SphericalRefraction(*lens1_argv)
-    s2=SphericalRefraction(*lens2_argv)
-    s3=SphericalRefraction(*lens3_argv)
-    ray=r1,r2,r3,r4
-    lens=s1,s2,s3
-    O=OutputPlane()
-    c=1
+if __name__ == '__main__':
+    # testing parameters, argument values for rays and lens
+    ray1_argv = ([0,0,0],[10,10,3])         # no intercept
+    ray2_argv = ([0,0,0],[1,1,3])        # intercept with an angle
+    ray3_argv = ([4,0,0],[0,0,3])       # parallel to z-axis but not perpendicular
+                                        # to the surface
+    ray4_argv = ([0,0,0],[0,0,3])       # z-axis
+    lens1_argv = (5,0.005,1,1.2,10)     # glass lens1 with positive curvature
+    lens2_argv = (10,0,1.5,1.5,10)      # plane surface
+    lens3_argv = (15,-0.005,1.5,0.7,20) # negative curvature
+    # generate rays and lens by arguments above.
+    r1 = Ray(*ray1_argv)
+    r2 = Ray(*ray2_argv)
+    r3 = Ray(*ray3_argv)
+    r4 = Ray(*ray4_argv)
+    s1 = SphericalRefraction(*lens1_argv)
+    s2 = SphericalRefraction(*lens2_argv)
+    s3 = SphericalRefraction(*lens3_argv)
+    ray = r1,r2,r3,r4
+    lens = s1,s2,s3
+    O = OutputPlane(20)         # OutputPlane at z0=20
+    c = 1                       # counter used to mark different rays
+    import matplotlib.pyplot as plt
+    # propagate rays through three lens and then propagate it onto output plane
     for i in ray:
         for j in lens:
             print c
             print "intercept:%s\n" %str(j.intercept(i))
             j.propagate_ray(i)
-            O.propagate_ray(i)
-            c+=1
+        O.propagate_ray(i)
         print i,'\n'
         print ("###########################################"\
             "############\n")
- 
- 
-            
-   
-    
-    
+        c+=1
+    for i in ray:
+        x,y,z = zip(*i.vertices())
+        print '~~~~~~~~~~~~~~~~~~'
+        print z
+        print x
+        plt.plot(z,y)
+    print s1
+    print s2
+    print s3
+    plt.show()
     
