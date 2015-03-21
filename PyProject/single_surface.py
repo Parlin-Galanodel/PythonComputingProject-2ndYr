@@ -21,22 +21,23 @@ raybundle_argv = input('input the parameters of ray bundle you want to generate\
                        'number of layers, ratio of points to layer]:\n')
 
 print 'generating raybundle...'
-raybundle = bundlesOfRays(*raybundle_argv)
+if type(raybundle_argv) is not tuple:
+    raybundle = bundlesOfRays(raybundle_argv)
+else:
+    raybundle = bundlesOfRays(*raybundle_argv)
 print 'done.'
 
 print 'analysing...'
 
 plt.figure()
-
-plt.subplot(221)
 plot_the_source_plane(raybundle)
 plt.title('source plane')
 
-plt.subplot(222)
+plt.figure()
 plot_ray_trace(raybundle, s)
 plt.title('ray trace')
 
-plt.subplot(223)
+plt.figure()
 plot_output_spot(raybundle)
 plt.title('output spot')
 
@@ -47,8 +48,12 @@ for i in raybundle:
     rms.append(lsquare)
 temp = sum(rms)
 RMS = 1.*temp/len(rms)
+maximum = max(rms)**0.5
+minimum = min(rms)**0.5
 
-print 'RMS spot radius is %g' %RMS
+print 'maximum raidus is %g' % maximum
+print 'minimum radius is %g' % minimum
+print 'RMS spot radius is %g' % RMS
 
 plt.show()
 
