@@ -301,7 +301,7 @@ class OutputPlane(SphericalRefraction):
     # Considering about it is a special case of SphericalRefraction(curvature
     # =0, refraction index on both sides are equal, big radius.
     # I made it a subclass of SphericalRefraction which is an subclass
-    # of OpticalElement.
+    # of OpticalElement instead of inheriting from OpticalElement directly.
     '''
         The object worked as screen behind any lens used in 
         this experiment. In initialising OutputPlane, only its

@@ -1,7 +1,7 @@
 # import essential modules
 '''
     In this module, some essential functions used to check the modules were defined and could
-    be used to do plottings of ray trace.
+    These functions be used to do plottings of ray trace.
 '''
 import raytracer as rt      # raytracer module which defined ray, spherical and output plane 
                             # classes
@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from math import sin, cos
 
 
-
+# initial test to make sure rt module works fine.
 if __name__ == '__main__':
     # A spherical surface s at z=100 with curvature 0.03 and refractive indices
     # n1=1.0 and n2=1.5, it would focus light
@@ -22,7 +22,7 @@ if __name__ == '__main__':
     test_ray=rt.Ray((1.01,0,0),(0.01,0,1))
     # negative curv surface would diverse light
     s2 = rt.SphericalRefraction(150,-0.03,1.0,1.5,100)
-    # negative curv while is part of convex would still focus light
+    # negative curv while as part of convex would still focus light
     s3 = rt.SphericalRefraction(200,-0.03,1.2,1.0,100)
     s.propagate_ray(test_ray)
     s2.propagate_ray(test_ray)
@@ -30,17 +30,19 @@ if __name__ == '__main__':
     o.propagate_ray(test_ray)
     points = test_ray.vertices()
     x, y, z = zip(*points)
-    # plt.figure()
-    # plt.plot(z,x,'r-')
-        # the consequence is very good, do not plot any more.
+    plt.figure()
+    plt.plot(z,x,'r-')
+        # the consequence is very good, do not repeat it any more.
     
 
 # The algorithm to find focal point
 def FocalPoint(spherical_refraction, ray=None):
     '''
         estimate the focal point by simulating a single beam parallel and 
-        close to z-axis.
+        close to z-axis. If ray is not provided, this function would use 
+        a ray from 10**-8 to z-axis as default.
     '''
+    # this function is not complete and so it is only valid for convex.
     if ray is None:         # I set this to be None since ray is mutable object
                             # and could be changed by this function when it is 
                             # used several times and give a wrong answer.
@@ -64,7 +66,7 @@ def FocalPoint(spherical_refraction, ray=None):
 
 
 def bundlesOfRays(radius, x_shift = 0, y_shift = 0, ray_direction=(0,0,1),\
-                    n = 20, m = 6):
+                    n = 10, m = 6):
     '''
         generate a bundle of rays by using the rtuniform function in genpolar module
         and store the rays in a list, radius is the radius of the bundles of 
@@ -87,15 +89,17 @@ def plot_the_source_plane(bundlesOfRays):
     '''
     for i in bundlesOfRays:
         x,y,z = i.vertices()[0]
-        plt.plot(x,y,'rx')
+        plt.plot(x,y,'r.')
     plt.axis('equal')
 
-def plot_ray_trace(bundlesOfRays, SphericalRefraction, type=None):
+def plot_ray_trace(bundlesOfRays, SphericalRefraction, \
+                    outpput_plane=None,type=None):
     '''
         plot the ray trace of a bundlesOfRays passing a SphericalRefraction
         and end at the focal plane of the SphericalRefraction.
     '''
-    output_plane=rt.OutputPlane(FocalPoint(SphericalRefraction))
+    if outpput_plane is None:
+        output_plane=rt.OutputPlane(FocalPoint(SphericalRefraction))
     if type is None:
         for i in bundlesOfRays:
             SphericalRefraction.propagate_ray(i)
@@ -113,19 +117,20 @@ def plot_ray_trace(bundlesOfRays, SphericalRefraction, type=None):
 def plot_output_spot(raybundle,marks=None):
     '''
         plot the output spot of a bundle of rays on output plane.
-        the ray bundle should be propagated firstly.
+        the ray bundle should be propagated through lens manually.
     '''
     for ray in raybundle:
         if marks is None:
-            plt.plot(ray.p()[0], ray.p()[1],'rx')
+            plt.plot(ray.p()[0], ray.p()[1],'r.')
         else:
             plt.plot(ray.p()[0], ray.p()[1],marks)
 
-# test bundlesOfRays, plot_the_source_plane and plot_ray_trace functions
+# test bundlesOfRays, plot_the_source_plane, plot_ray_trace functions
+# and plot_output_spot function.
 if __name__ == '__main__':
     raybundle = bundlesOfRays(5, 0, 0, (0.1, 0, 1), 5, 6)
     raybundle2 = bundlesOfRays(5, 0, 0, (0, 0, 1), 5, 6)
-    raybundle3 = bundlesOfRays(5, 0, 0, (0, 0, 1), 5, 6)
+    raybundle3 = bundlesOfRays(5, -5, 0, (0, 0, 1), 5, 6)
     plt.figure()
     plot_the_source_plane(raybundle)
     plt.figure()
@@ -137,6 +142,7 @@ if __name__ == '__main__':
     plot_output_spot(raybundle,'r.')
     plot_output_spot(raybundle2,'b.')
     plot_output_spot(raybundle3,'g.')
+    plt.axis('equal')
     plt.show()
 
 
