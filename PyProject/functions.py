@@ -34,6 +34,7 @@ if __name__ == '__main__':
     plt.plot(z,x,'r-')
         # the consequence is very good, do not repeat it any more.
     
+    
 
 # The algorithm to find focal point
 def FocalPoint(spherical_refraction, ray=None):
@@ -99,7 +100,9 @@ def plot_ray_trace(bundlesOfRays, SphericalRefraction, \
         and end at the focal plane of the SphericalRefraction.
     '''
     if outpput_plane is None:
-        output_plane=rt.OutputPlane(FocalPoint(SphericalRefraction))
+        output_plane = rt.OutputPlane(FocalPoint(SphericalRefraction))
+    else:
+        output_plane = rt.OutputPlane(outpput_plane)
     if type is None:
         for i in bundlesOfRays:
             SphericalRefraction.propagate_ray(i)
@@ -141,8 +144,11 @@ if __name__ == '__main__':
     plt.figure()
     o2=rt.OutputPlane(FocalPoint(s))
     plot_output_spot(raybundle,'r.')
+    plt.axis('equal')
     plot_output_spot(raybundle2,'b.')
+    plt.axis('equal')
     plot_output_spot(raybundle3,'g.')
+    plt.axis('equal')
     plt.axis('equal')
     plt.show()
 

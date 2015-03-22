@@ -1,13 +1,13 @@
 '''
-    This module is a final version of packed function used to do single 
-    spherical refracting surface.
+    This module is a final version of packed function used to do planoconvex
+    lens, it is modified from single_surface module.
 '''
 # the function module contains all the things we need, import all its contens
 # to the global name space.
 from functions import *
 
-s_argv = input('input the arguments of the spherical refraction surface\n'\
-               'in the order psoition, curvature, n1, n2 and radius'\
+s_argv = input('input the arguments of the planoconvex lens\n'\
+               'in the order psoition, curvature, refractive index and separation\n'\
                'seperate by comma:\n')
 
 
@@ -17,7 +17,7 @@ raybundle_argv = input('input the parameters of ray bundle you want to generate\
                        'number of layers, ratio of points to layer]:\n')
 
 
-s = rt.SphericalRefraction(*s_argv)
+s = rt.Planoconvex(*s_argv)
 s_argv = 'lens arguments: %s' %repr(s_argv)
 
 if type(raybundle_argv) is not tuple:
@@ -71,18 +71,3 @@ plt.text(0.02, 0.15, s3)
 plt.title('statistics')
 
 plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

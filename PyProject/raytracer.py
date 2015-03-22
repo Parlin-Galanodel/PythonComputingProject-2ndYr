@@ -222,7 +222,7 @@ class SphericalRefraction(OpticalElement):
             # # # d=na(d)
             # # # return normalise(d)
 
-    # Martix method is stupid and complex compared to the formula I found online
+    # Matrix method is stupid and complex compared to the formula I found online
                         
             # Rewrite it by Snell's law in 3D, or vector form.
             # I am worried on using theta in formula and so I do not use
@@ -234,7 +234,7 @@ class SphericalRefraction(OpticalElement):
             dot(cross(Nn,k),cross(Nn,k)))
             #n is a unit vector represent the direction of refracted wave.
 
-    # It is another formula from wikipedia of snell's Law below, I used it to do a double check
+    # It is another formula from wikipedia of Snell's Law below, I used it to do a double check
     # of the formula above to make sure the consequence is true.
         #~ r=n1/n2; c=dot(N,k);
         #~ n=r*k-(r*c-sqrt(1.-r**2*(1-c**2)))*N
@@ -272,7 +272,7 @@ class SphericalRefraction(OpticalElement):
                 N = O-p
                 N = normalise(N)
             else:
-            # if curvature<0, the only difference is that N vectore is 
+            # if curvature<0, the only difference is that N vector is 
             # OP instead of PO
                 R = 1./self.__curvature
                 O = na((0, 0, self.__z0+R))
@@ -280,7 +280,7 @@ class SphericalRefraction(OpticalElement):
                 N = p-O
                 N = normalise(N)
             v = self.refraction(k,N,n1,n2)
-            # refraction function would give None if total reflection occured
+            # refraction function would give None if total reflection occurred
             if v is None:   # is operator is used here since when 
                             # an array compared to None, interpreter 
                             # would give a warning, that dose not stop
@@ -309,7 +309,7 @@ class OutputPlane(SphericalRefraction):
     '''
     def __init__(self, position=10):
         z0 = position
-        curvature = 0                 # outputplane is flat plane
+        curvature = 0                 # output plane is flat plane
         n1 = n2 = 1                     # No refraction
         aperture_radius = 10000        # Screen must be big enough
         super(OutputPlane,self).__init__(z0,curvature,n1,n2,aperture_radius)
@@ -363,4 +363,67 @@ if __name__ == '__main__':
     print s2
     print s3
     plt.show()
+    
+class Planoconvex(OpticalElement):
+    '''
+        This is the class to describe a planoconvex, Z0 is the position near
+        on z-axis near to light source, separation is the distance on z-axis
+        between the two surface, refractive_index is the refractive_index
+        in lens.
+    '''
+    def __init__(self, z0, curvature, separation, refractive_index):
+        # generate two surfaces of the lens.
+        if curvature > 0:
+            aperture_radius = sqrt(2./curvature*separation-separation*separation)
+            
+            s_front = SphericalRefraction(z0, curvature, 1, refractive_index,\
+                                          aperture_radius)
+            s_back = SphericalRefraction(z0+separation, 0, refractive_index,\
+                                         1, aperture_radius)
+        elif curvature <0:
+            aperture_radius = sqrt(-2.*separation/curvature-separation*separation)
+            
+            s_front = SphericalRefraction(z0, 0, 1, refractive_index,\
+                                          aperture_radius)
+            s_back = SphericalRefraction(z0+separation, curvature, \
+                                         refractive_index,\
+                                         1, aperture_radius)
+        else:
+            raise Exception('At least one curved surface')
+        
+        # binding the two surfaces to instance of planoconvex
+        self.s1 = s_front
+        self.s2 = s_back
+            
+    def propagate_ray(self, ray):
+        self.s1.propagate_ray(ray)
+        self.s2.propagate_ray(ray)
+        
+    def __repr__(self):
+        s1 = str(self.s1)
+        s2 = str(self.s2)
+        s = 'Front surface:\n' + s1 + '\n' + 'Back surface:\n' + s2
+        return s
+                                     
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
     
