@@ -1,7 +1,6 @@
     The source code of Project A: Raytracer, source code could also be found
 on my github. Link was shown below:
-(https://github.com/Parlin-Galanodel/PythonComputingProject-2ndYr/
- tree/master/PyProject)
+(https://github.com/Parlin-Galanodel/PythonComputingProject-2ndYr/tree/master/PyProject)
 
     Tips: The source code was carefully tested and was guaranted that it could be 
 	run on my own laptop(python 2.7.9, anaconda distribution, windows 7 professional
