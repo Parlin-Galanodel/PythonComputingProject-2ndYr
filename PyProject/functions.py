@@ -125,6 +125,7 @@ def plot_output_spot(raybundle,marks=None):
         else:
             plt.plot(ray.p()[0], ray.p()[1],marks)
         plt.axis('equal')
+        
 # test bundlesOfRays, plot_the_source_plane, plot_ray_trace functions
 # and plot_output_spot function.
 if __name__ == '__main__':

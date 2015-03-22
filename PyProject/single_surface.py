@@ -46,22 +46,17 @@ for i in raybundle:
     x, y, z = i.p()
     lsquare = x**2 + y**2
     rms.append(lsquare)
+
 temp = sum(rms)
 RMS = 1.*temp/len(rms)
 maximum = max(rms)**0.5
 minimum = min(rms)**0.5
 
-print 'maximum raidus is %g' % maximum
-print 'minimum radius is %g' % minimum
-print 'RMS spot radius is %g' % RMS
+print 'RMS is:\t%g' % RMS
+print 'Maximum radius is:\t%g' % maximum
+print 'Minimum radius is:\t%g' % minimum
 
 plt.show()
-
-
-
-
-
-
 
 
 
