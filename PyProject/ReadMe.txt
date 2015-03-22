@@ -8,22 +8,22 @@ on my github. Link was shown below:
 	version). But it sometimes failed on computers in computing suite when running
 	in ipython or qtconsole.
 	  Considering about the fact that Enthought distribution was use in college, it
-	might because the internal difference between two different distribution and I
+	might because the internal difference between two different distributions and I
 	could not solve it.
 	  
 	  If the code failed, just run it in a pure python environment(use python
 	command to run that file from terminal). All the code worked fine in pure 
 	python environment.
-
+	  Also, the 5 files must be placed in the same directory.
 
     The source code was divided into 5 files. raytracer.py & functions.py are the two
-main part and genpolar.py is a function from task 15 in worksheet 1 which is base part
-in implementing functions.py module.
+main part and genpolar.py is jsut a function from task 15 in worksheet 1 while it is
+base part in implementing functions.py module.
 
 
 
   raytracer.py:
-	This module contains all the basic block in this project. They are definitions
+	This module contains all the basic blocks in this project. They are definitions
 of Ray class, OpticalElement class and its two subclasses SphericalRefraction and 
 Planoconvex. I believe these classes were documented and commented properly.
 
