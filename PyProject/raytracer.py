@@ -249,6 +249,11 @@ class SphericalRefraction(OpticalElement):
         
     #Task 6.
     def propagate_ray(self,ray):
+    '''
+        this function implemented the propagate_ray method and would allow
+        an instance of SphericalRefraction class to propagate a ray through
+        it.
+    '''
         new_point = self.intercept(ray)
         if new_point is None:       # is operator is used here since when 
                                     # an array compared to None, future warning
@@ -320,6 +325,9 @@ class OutputPlane(SphericalRefraction):
 # propagate_ray correctly propagates and refracts the ray. Try a range
 # of initial rays to check your refracting object behaves as you expect.
 if __name__ == '__main__':
+    '''
+        A unit test for this module.
+    '''
     # testing parameters, argument values for rays and lens
     ray1_argv = ([0,0,0],[10,10,3])         # no intercept
     ray2_argv = ([0,0,0],[1,1,3])        # intercept with an angle
@@ -396,10 +404,13 @@ class Planoconvex(OpticalElement):
         self.s2 = s_back
             
     def propagate_ray(self, ray):
+    # propagate_ray is just call propagate_ray method for each surface of 
+    # the lens.
         self.s1.propagate_ray(ray)
         self.s2.propagate_ray(ray)
         
     def __repr__(self):
+    # representation to display planoconvex object in command line UI
         s1 = str(self.s1)
         s2 = str(self.s2)
         s = 'Front surface:\n' + s1 + '\n' + 'Back surface:\n' + s2

@@ -13,6 +13,9 @@ from math import sin, cos
 
 # initial test to make sure rt module works fine.
 if __name__ == '__main__':
+'''
+    test for ray tracer module to make sure it would work as expected.
+'''
     # A spherical surface s at z=100 with curvature 0.03 and refractive indices
     # n1=1.0 and n2=1.5, it would focus light
     s = rt.SphericalRefraction(100,0.03,1.0,1.5,100)
@@ -132,6 +135,9 @@ def plot_output_spot(raybundle,marks=None):
 # test bundlesOfRays, plot_the_source_plane, plot_ray_trace functions
 # and plot_output_spot function.
 if __name__ == '__main__':
+''' 
+    unit test for functions defined in this module 
+'''
     raybundle = bundlesOfRays(5, 0, 0, (0.1, 0, 1), 5, 6)
     raybundle2 = bundlesOfRays(5, 0, 0, (0, 0, 1), 5, 6)
     raybundle3 = bundlesOfRays(5, -5, 0, (0, 0, 1), 5, 6)
