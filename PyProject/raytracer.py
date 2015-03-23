@@ -230,6 +230,10 @@ class SphericalRefraction(OpticalElement):
             # The formula comes from StarkEffects.com
             # (http://www.starkeffects.com/snells-law-vector.shtml)
         Nn = -1.*N  #negative N, since the formula use N as norm toward Incident
+        if 1.-(1.*n1/n2)**2*dot(cross(Nn,k),cross(Nn,k)) < 0:
+            return None
+            # avoid math domain error
+            
         n = 1.*n1/n2*cross(Nn,cross(N,k))-Nn*sqrt(1.-(1.*n1/n2)**2* \
             dot(cross(Nn,k),cross(Nn,k)))
             #n is a unit vector represent the direction of refracted wave.
