@@ -3,9 +3,10 @@ on my github. Link was shown below:
 (https://github.com/Parlin-Galanodel/PythonComputingProject-2ndYr/tree/master/PyProject)
 
     Tips: The source code was carefully tested and was guaranted that it could be 
-	run on my own laptop(python 2.7.9, anaconda distribution, windows 7 professional
-	version). But it sometimes failed on computers in computing suite when running
-	in ipython or qtconsole.
+	run on my own laptoppython 2.7.9, anaconda distribution, windows 7 professional
+	version). But it(Singlesurface.py & Planocovex.py to be exactly) sometimes 
+	failed on computers in computing suite when running in ipython or qtconsole.
+
 	  Considering about the fact that Enthought distribution was use in college, it
 	might because the internal difference between two different distributions and I
 	could not solve it.
@@ -13,7 +14,9 @@ on my github. Link was shown below:
 	  If the code failed, just run it in a pure python environment(use python
 	command to run that file from terminal). All the code worked fine in pure 
 	python environment.
+
 	  Also, the 5 files must be placed in the same directory.
+
 
     The source code was divided into 5 files. raytracer.py & functions.py are the two
 main part and genpolar.py is jsut a function from task 15 in worksheet 1 while it is
