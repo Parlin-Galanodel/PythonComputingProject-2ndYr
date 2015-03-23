@@ -10,10 +10,10 @@ on my github. Link was shown below:
 	  Considering about the fact that Enthought distribution was used in college, it
 	might because the internal difference between two different distributions and I
 	could not solve it.
-	  
-	  If the code fail, just run it in a pure python environment(use python
-	command to run that file from terminal). All the code worked fine in pure 
-	python environment.
+
+	 If the code failed, please just run it in a pure python environment(use
+	python command to run that file from terminal). All the code worked fine in
+	pure python environment.
 
 	  Also, the 5 files must be placed in the same directory.
 
