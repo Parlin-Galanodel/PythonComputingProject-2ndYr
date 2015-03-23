@@ -15,8 +15,8 @@ raybundle_argv = input('input the parameters of ray bundle you want to generate\
                        'in the order of raybundle radius, [x coordinate of center\n'\
                        'y coordinate of the center, ray direction as a vector\n'\
                        'number of layers, ratio of points to layer]:\n')
-
-
+                       
+                       
 s = rt.Planoconvex(*s_argv)
 s_argv = 'lens arguments: %s' %repr(s_argv)
 

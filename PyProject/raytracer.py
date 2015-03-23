@@ -249,11 +249,11 @@ class SphericalRefraction(OpticalElement):
         
     #Task 6.
     def propagate_ray(self,ray):
-    '''
-        this function implemented the propagate_ray method and would allow
-        an instance of SphericalRefraction class to propagate a ray through
-        it.
-    '''
+        '''
+            this function implemented the propagate_ray method and would allow
+            an instance of SphericalRefraction class to propagate a ray through
+            it.
+        '''
         new_point = self.intercept(ray)
         if new_point is None:       # is operator is used here since when 
                                     # an array compared to None, future warning
