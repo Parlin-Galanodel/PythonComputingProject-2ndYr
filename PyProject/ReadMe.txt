@@ -7,7 +7,7 @@ on my github. Link was shown below:
 	version). But it(Singlesurface.py & Planocovex.py to be exactly) sometimes 
 	failed on computers in computing suite when running in ipython or qtconsole.
 
-	  Considering about the fact that Enthought distribution was use in college, it
+	  Considering about the fact that Enthought distribution was used in college, it
 	might because the internal difference between two different distributions and I
 	could not solve it.
 	  
