@@ -11,7 +11,7 @@ on my github. Link was shown below:
 	might because the internal difference between two different distributions and I
 	could not solve it.
 	  
-	  If the code failed, just run it in a pure python environment(use python
+	  If the code fail, just run it in a pure python environment(use python
 	command to run that file from terminal). All the code worked fine in pure 
 	python environment.
 
